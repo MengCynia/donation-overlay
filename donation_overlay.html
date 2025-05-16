@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <title>斗內通知</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: transparent;
+      font-family: "Microsoft JhengHei", sans-serif;
+    }
+    .container {
+      position: fixed;
+      top: 10%;
+      right: 0;
+      width: 400px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 10px;
+    }
+    .donation {
+      background-color: #E6E6FA;
+      color: #4B0082;
+      padding: 10px 15px;
+      border-radius: 10px 0 0 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.3);
+      max-width: 100%;
+      animation: slideIn 0.5s ease-out;
+      position: relative;
+    }
+    .donation::before {
+      content: "🌸";
+      position: absolute;
+      left: -25px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 20px;
+    }
+    @keyframes slideIn {
+      from {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+  </style>
+</head>
+<body>
+  <iframe id="ecpay-frame" src="https://payment.ecpay.com.tw/Broadcaster/AlertBox/4A29B523EC3E41FD93352ED078BBBD7F" style="display:none;"></iframe>
+  <div class="container" id="donation-container"></div>
+
+  <script>
+    const container = document.getElementById("donation-container");
+    const messages = [];
+
+    window.addEventListener("message", (event) => {
+      const data = event.data;
+      if (typeof data === "string" && data.includes("非常感謝")) {
+        messages.unshift(data);
+        if (messages.length > 10) messages.pop();
+        renderMessages();
+      }
+    });
+
+    function renderMessages() {
+      container.innerHTML = "";
+      messages.forEach(msg => {
+        const div = document.createElement("div");
+        div.className = "donation";
+        div.textContent = msg;
+        container.appendChild(div);
+      });
+    }
+  </script>
+</body>
+</html>
